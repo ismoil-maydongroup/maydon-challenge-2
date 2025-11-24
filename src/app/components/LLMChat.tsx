@@ -1,9 +1,17 @@
-'use client';
+"use client";
 
-import { Button, Drawer, Input, Space, Typography, Spin, message as antMessage } from 'antd';
-import { RobotOutlined, SendOutlined } from '@ant-design/icons';
-import { useState, useEffect, useRef } from 'react';
-import { MessageDTO } from '@/src/application/dtos/MessageDTO';
+import {
+  Button,
+  Drawer,
+  Input,
+  Space,
+  Typography,
+  Spin,
+  message as antMessage,
+} from "antd";
+import { RobotOutlined, SendOutlined } from "@ant-design/icons";
+import { useState, useEffect, useRef } from "react";
+import { MessageDTO } from "@/application/dtos/MessageDTO";
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -17,31 +25,38 @@ interface LLMChatProps {
 
 interface AIMessage {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: Date;
 }
 
-export function LLMChat({ onSendLLMRequest, disabled = false, messages, currentUserId }: LLMChatProps) {
+export function LLMChat({
+  onSendLLMRequest,
+  disabled = false,
+  messages,
+  currentUserId,
+}: LLMChatProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [aiMessage, setAiMessage] = useState('');
+  const [aiMessage, setAiMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [aiConversation, setAiConversation] = useState<AIMessage[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Load conversation from localStorage on mount
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('aiConversation');
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("aiConversation");
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
-          setAiConversation(parsed.map((msg: any) => ({
-            ...msg,
-            timestamp: new Date(msg.timestamp),
-          })));
+          setAiConversation(
+            parsed.map((msg: any) => ({
+              ...msg,
+              timestamp: new Date(msg.timestamp),
+            }))
+          );
         } catch (e) {
-          console.error('Failed to load AI conversation', e);
+          console.error("Failed to load AI conversation", e);
         }
       }
     }
@@ -52,15 +67,17 @@ export function LLMChat({ onSendLLMRequest, disabled = false, messages, currentU
     setAiConversation((prev) => {
       const aiMessages: AIMessage[] = [...prev];
       let updated = false;
-      
+
       messages.forEach((msg) => {
-        if (msg.userId === 'llm-assistant') {
+        if (msg.userId === "llm-assistant") {
           // Check if this AI message is already in conversation
-          const exists = aiMessages.some(m => m.id === msg.id && m.role === 'assistant');
+          const exists = aiMessages.some(
+            (m) => m.id === msg.id && m.role === "assistant"
+          );
           if (!exists) {
             aiMessages.push({
               id: msg.id,
-              role: 'assistant',
+              role: "assistant",
               content: msg.content,
               timestamp: new Date(msg.timestamp),
             });
@@ -71,16 +88,18 @@ export function LLMChat({ onSendLLMRequest, disabled = false, messages, currentU
 
       if (updated) {
         // Sort by timestamp
-        aiMessages.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
-        
+        aiMessages.sort(
+          (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
+        );
+
         // Save to localStorage
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('aiConversation', JSON.stringify(aiMessages));
+        if (typeof window !== "undefined") {
+          localStorage.setItem("aiConversation", JSON.stringify(aiMessages));
         }
-        
+
         return aiMessages;
       }
-      
+
       return prev;
     });
   }, [messages]);
@@ -88,7 +107,7 @@ export function LLMChat({ onSendLLMRequest, disabled = false, messages, currentU
   // Scroll to bottom when new messages arrive
   useEffect(() => {
     if (isDrawerOpen) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [aiConversation, isDrawerOpen]);
 
@@ -96,7 +115,7 @@ export function LLMChat({ onSendLLMRequest, disabled = false, messages, currentU
     if (aiMessage.trim() && !disabled && !isLoading) {
       const userMessage: AIMessage = {
         id: `temp-${Date.now()}`,
-        role: 'user',
+        role: "user",
         content: aiMessage.trim(),
         timestamp: new Date(),
       };
@@ -104,18 +123,21 @@ export function LLMChat({ onSendLLMRequest, disabled = false, messages, currentU
       // Add user message to conversation immediately
       const updatedConversation = [...aiConversation, userMessage];
       setAiConversation(updatedConversation);
-      
+
       // Save to localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('aiConversation', JSON.stringify(updatedConversation));
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          "aiConversation",
+          JSON.stringify(updatedConversation)
+        );
       }
-      
-      setAiMessage('');
+
+      setAiMessage("");
       setIsLoading(true);
 
       try {
         onSendLLMRequest(userMessage.content);
-        
+
         // Wait a bit for the response to come through socket
         // The response will be added via the messages prop
         setTimeout(() => {
@@ -123,13 +145,13 @@ export function LLMChat({ onSendLLMRequest, disabled = false, messages, currentU
         }, 3000);
       } catch (error) {
         setIsLoading(false);
-        antMessage.error('Failed to send message to AI');
+        antMessage.error("Failed to send message to AI");
       }
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
@@ -173,27 +195,35 @@ export function LLMChat({ onSendLLMRequest, disabled = false, messages, currentU
               aiConversation.map((msg) => (
                 <div
                   key={msg.id}
-                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${
+                    msg.role === "user" ? "justify-end" : "justify-start"
+                  }`}
                 >
                   <div
                     className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                      msg.role === 'user'
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-gray-100 text-gray-800 border border-gray-200'
+                      msg.role === "user"
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-100 text-gray-800 border border-gray-200"
                     }`}
                   >
-                    {msg.role === 'assistant' && (
+                    {msg.role === "assistant" && (
                       <div className="flex items-center gap-2 mb-1">
                         <RobotOutlined className="text-blue-500" />
-                        <Text className="text-xs font-semibold text-gray-600">AI Assistant</Text>
+                        <Text className="text-xs font-semibold text-gray-600">
+                          AI Assistant
+                        </Text>
                       </div>
                     )}
-                    <Text className={msg.role === 'user' ? 'text-white' : 'text-gray-800'}>
+                    <Text
+                      className={
+                        msg.role === "user" ? "text-white" : "text-gray-800"
+                      }
+                    >
                       {msg.content}
                     </Text>
                     <div
                       className={`text-xs mt-1 ${
-                        msg.role === 'user' ? 'text-blue-100' : 'text-gray-500'
+                        msg.role === "user" ? "text-blue-100" : "text-gray-500"
                       }`}
                     >
                       {msg.timestamp.toLocaleTimeString()}
@@ -233,7 +263,7 @@ export function LLMChat({ onSendLLMRequest, disabled = false, messages, currentU
                 onClick={handleSend}
                 disabled={disabled || !aiMessage.trim() || isLoading}
                 loading={isLoading}
-                className="h-auto"
+                className="h-auto bg-blue-500"
               >
                 Send
               </Button>

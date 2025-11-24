@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { Input, Button, Space } from 'antd';
-import { SendOutlined } from '@ant-design/icons';
-import { useState } from 'react';
+import { Input, Button, Space } from "antd";
+import { SendOutlined } from "@ant-design/icons";
+import { useState } from "react";
 
 const { TextArea } = Input;
 
@@ -12,17 +12,17 @@ interface MessageInputProps {
 }
 
 export function MessageInput({ onSend, disabled = false }: MessageInputProps) {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   const handleSend = () => {
     if (message.trim() && !disabled) {
       onSend(message.trim());
-      setMessage('');
+      setMessage("");
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
@@ -45,7 +45,7 @@ export function MessageInput({ onSend, disabled = false }: MessageInputProps) {
           icon={<SendOutlined />}
           onClick={handleSend}
           disabled={disabled || !message.trim()}
-          className="h-auto"
+          className="h-auto bg-blue-500"
         >
           Send
         </Button>
@@ -53,4 +53,3 @@ export function MessageInput({ onSend, disabled = false }: MessageInputProps) {
     </div>
   );
 }
-

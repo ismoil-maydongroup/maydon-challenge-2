@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { Modal, Input, Button, Form, message } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
-import { useState } from 'react';
+import { Modal, Input, Button, Form, message } from "antd";
+import { UserOutlined } from "@ant-design/icons";
+import { useState } from "react";
 
 interface NicknameModalProps {
   open: boolean;
@@ -17,33 +17,33 @@ export function NicknameModal({ open, onComplete }: NicknameModalProps) {
     try {
       const values = await form.validateFields();
       const nickname = values.nickname.trim();
-      
+
       if (nickname.length < 2) {
-        message.error('Nickname must be at least 2 characters long');
+        message.error("Nickname must be at least 2 characters long");
         return;
       }
-      
+
       if (nickname.length > 20) {
-        message.error('Nickname must be less than 20 characters');
+        message.error("Nickname must be less than 20 characters");
         return;
       }
 
       setLoading(true);
-      
+
       // Store nickname in localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('chatNickname', nickname);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("chatNickname", nickname);
       }
-      
+
       onComplete(nickname);
       setLoading(false);
     } catch (error) {
-      console.error('Validation failed:', error);
+      console.error("Validation failed:", error);
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
     }
@@ -63,9 +63,9 @@ export function NicknameModal({ open, onComplete }: NicknameModalProps) {
           name="nickname"
           label="Choose a nickname"
           rules={[
-            { required: true, message: 'Please enter a nickname' },
-            { min: 2, message: 'Nickname must be at least 2 characters' },
-            { max: 20, message: 'Nickname must be less than 20 characters' },
+            { required: true, message: "Please enter a nickname" },
+            { min: 2, message: "Nickname must be at least 2 characters" },
+            { max: 20, message: "Nickname must be less than 20 characters" },
           ]}
         >
           <Input
@@ -81,6 +81,7 @@ export function NicknameModal({ open, onComplete }: NicknameModalProps) {
             type="primary"
             htmlType="submit"
             block
+            className="bg-blue-500"
             loading={loading}
             onKeyPress={handleKeyPress}
           >
@@ -94,4 +95,3 @@ export function NicknameModal({ open, onComplete }: NicknameModalProps) {
     </Modal>
   );
 }
-
