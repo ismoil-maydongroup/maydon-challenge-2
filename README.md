@@ -176,10 +176,36 @@ If the API key is not provided, the LLM features will show an error message when
 - `npm run build` - Build for production
 - `npm start` - Start production server
 - `npm run lint` - Run ESLint
+- `npm test` - Run tests
+- `npm run test:watch` - Run tests in watch mode
+- `npm run test:coverage` - Run tests with coverage report
 
 ### TypeScript
 
 The entire codebase is written in TypeScript for type safety across all layers.
+
+### Testing
+
+The project includes comprehensive unit tests for all layers:
+
+- **Domain Layer**: Value objects, entities, and domain services
+- **Application Layer**: Use cases and application services
+- **Infrastructure Layer**: Repositories and event bus
+
+Run tests with:
+```bash
+npm test
+```
+
+See [docs/TESTING.md](docs/TESTING.md) for detailed testing documentation.
+
+### Documentation
+
+Comprehensive documentation is available in the `docs/` directory:
+
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Detailed architecture documentation
+- **[API.md](docs/API.md)** - API and WebSocket event documentation
+- **[TESTING.md](docs/TESTING.md)** - Testing guide and best practices
 
 ## Architecture Decisions
 
